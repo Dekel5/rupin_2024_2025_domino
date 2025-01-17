@@ -1,9 +1,9 @@
 import os
-from functions.rotate_image import rotate_image_randomly
-from functions.brightness_image import change_brightness_randomly
-from functions.sharpness_image import change_sharpness_randomly
-from functions.blur_image import blur_image_randomly
-from functions.black_and_white import convert_to_black_and_white
+from functions.pre_processing.rotate_image import rotate_image_randomly
+from functions.pre_processing.brightness_image import change_brightness_randomly
+from functions.pre_processing.sharpness_image import change_sharpness_randomly
+from functions.pre_processing.blur_image import blur_image_randomly
+from functions.pre_processing.black_and_white import convert_to_black_and_white
 
 def generate_descendants(input_dir, output_dir):
     """
