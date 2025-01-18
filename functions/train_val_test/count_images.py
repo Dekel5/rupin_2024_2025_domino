@@ -15,7 +15,7 @@ def count_image_files_in_folder(folder_path, convert_heic=False):
     convert_heic (bool): If True, converts HEIC files to JPEG and includes them in the count.
 
     Returns:
-    int: The number of image files in the folder.
+    int: The number of unique image files in the folder.
     """
     if not os.path.exists(folder_path):
         raise FileNotFoundError(f"The folder does not exist: {folder_path}")
@@ -24,6 +24,8 @@ def count_image_files_in_folder(folder_path, convert_heic=False):
     supported_extensions = ('.png', '.jpg', '.jpeg', '.heic')
     image_files = [f for f in os.listdir(folder_path) if f.lower().endswith(supported_extensions)]
 
+    converted_files = set()  # To keep track of converted HEIC files
+
     if convert_heic:
         # Convert HEIC files to JPEG
         heic_files = [f for f in image_files if f.lower().endswith('.heic')]
@@ -31,11 +33,15 @@ def count_image_files_in_folder(folder_path, convert_heic=False):
             heic_path = os.path.join(folder_path, heic_file)
             jpeg_path = os.path.splitext(heic_path)[0] + '.jpeg'
             try:
-                # Open HEIC file and save as JPEG
-                image = Image.open(heic_path)
-                image.save(jpeg_path, "JPEG")
-                image_files.append(jpeg_path)  # Add the converted JPEG file to the list
+                # Check if the JPEG file already exists to avoid duplication
+                if not os.path.exists(jpeg_path):
+                    # Open HEIC file and save as JPEG
+                    image = Image.open(heic_path)
+                    image.save(jpeg_path, "JPEG")
+                converted_files.add(jpeg_path)  # Track the converted file
             except Exception as e:
                 print(f"Failed to convert {heic_file}: {e}")
 
-    return len(image_files)
+    # Remove duplicates: count only unique files (originals + converted)
+    unique_files = set(image_files) | converted_files
+    return len(unique_files)
