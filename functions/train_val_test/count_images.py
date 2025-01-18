@@ -20,36 +20,29 @@ def count_image_files_in_folder(folder_path, convert_heic=False):
     if not os.path.exists(folder_path):
         raise FileNotFoundError(f"The folder does not exist: {folder_path}")
 
-    # List of supported extensions
+    # Supported image file extensions
     supported_extensions = ('.png', '.jpg', '.jpeg', '.heic')
 
-    # Collect all image files (with full paths)
-    image_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.lower().endswith(supported_extensions)]
-
-    # Track unique file base names (excluding extensions)
+    # Initialize a set to store unique file base names
     unique_files = set()
 
-    if convert_heic:
-        # Process HEIC files
-        for image_file in image_files:
-            if image_file.lower().endswith('.heic'):
-                heic_path = image_file
-                jpeg_path = os.path.splitext(heic_path)[0] + '.jpeg'
+    # Iterate over all files in the folder
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
 
-                if os.path.splitext(os.path.basename(heic_path))[0] not in unique_files:
-                    # Convert HEIC to JPEG if not already converted
-                    if not os.path.exists(jpeg_path):
-                        try:
-                            image = Image.open(heic_path)
-                            image.save(jpeg_path, "JPEG")
-                        except Exception as e:
-                            print(f"Failed to convert {heic_path}: {e}")
+        # Check if the file has a supported extension
+        if file_name.lower().endswith(supported_extensions):
+            base_name = os.path.splitext(file_name)[0]  # Get base name without extension
+            unique_files.add(base_name)
 
-                # Add the base name to the unique set
-                unique_files.add(os.path.splitext(os.path.basename(heic_path))[0])
-    else:
-        # Process non-HEIC files
-        for image_file in image_files:
-            unique_files.add(os.path.splitext(os.path.basename(image_file))[0])
+            # If HEIC and conversion is enabled, convert to JPEG
+            if convert_heic and file_name.lower().endswith('.heic'):
+                jpeg_path = os.path.join(folder_path, base_name + '.jpeg')
+                if not os.path.exists(jpeg_path):  # Avoid duplicate conversion
+                    try:
+                        image = Image.open(file_path)
+                        image.save(jpeg_path, "JPEG")
+                    except Exception as e:
+                        print(f"Failed to convert {file_name}: {e}")
 
     return len(unique_files)
