@@ -1,10 +1,9 @@
 import os
 import random
 
-
 def split_images_into_groups(source_folder, train_ratio=0.5, val_ratio=0.5):
     """
-    Splits image files from a source folder into training and validation groups.
+    Splits image files from a source folder into training and validation groups (in memory).
 
     Parameters:
     source_folder (str): The path to the folder containing the image files.
