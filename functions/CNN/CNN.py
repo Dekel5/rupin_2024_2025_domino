@@ -58,7 +58,9 @@ class DominoDataset(Dataset):
 
 
 # קריאת נתונים מתוך קובץ האקסל והכנת הסטים
-data_splits = split_images_by_balanced_feature_no_test("path/to/excel_file.xlsx")
+url = "https://raw.githubusercontent.com/Ditzhaky/rupin_2024_2025_domino/master/meta_data_v2.xlsx"
+data_splits = split_images_by_balanced_feature_no_test(url)
+
 
 # יצירת DataLoaders
 train_dataset = DominoDataset(data_splits["train"])
